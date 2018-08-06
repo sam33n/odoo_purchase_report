@@ -72,7 +72,7 @@ class PurchaseReport(models.Model):
                     t.categ_id as category_id,
                     s.currency_id,
                     t.uom_id as product_uom,
-                    sum(s.amount_tax / COALESCE(cr.rate,1.0)) as tax,
+                    l.price_tax as tax,
                     sum(l.price_unit / COALESCE(cr.rate,1.0)) as price_id,
                     sum(l.product_qty * l.price_unit)::decimal(16,2) as list_price,
                     sum(l.product_qty/u.factor*u2.factor) as unit_quantity,
@@ -104,6 +104,7 @@ class PurchaseReport(models.Model):
                         cr.date_start <= coalesce(s.date_order, now()) and
                         (cr.date_end is null or cr.date_end > coalesce(s.date_order, now())))
                 group by
+                    l.price_tax,
                     s.company_id,
                     s.create_uid,
                     s.partner_id,
